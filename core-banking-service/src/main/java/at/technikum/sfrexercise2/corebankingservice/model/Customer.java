@@ -7,7 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class Customer {
 
-  private String fistName;
+  private String firstName;
   private String lastName;
   private double balance;
   private String iban;

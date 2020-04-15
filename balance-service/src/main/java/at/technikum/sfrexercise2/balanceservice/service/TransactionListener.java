@@ -1,7 +1,8 @@
-package at.technikum.sfrexercise2.balanceservice.services;
+package at.technikum.sfrexercise2.balanceservice.service;
 
 import at.technikum.sfrexercise2.balanceservice.model.MoneyLaunderingAlert;
 import at.technikum.sfrexercise2.balanceservice.model.Transaction;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -11,7 +12,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class TransactionListener {
+
+  private TransactionService transactionService;
+  private MoneyLaunderingAlertService alertService;
 
   @KafkaListener(topics = "${transaction.topic.name}", groupId = "${spring.kafka.consumer.group-id}",
       containerFactory = "transactionKafkaListenerContainerFactory")
@@ -24,6 +29,8 @@ public class TransactionListener {
         transaction.getDestinationIban(),
         transaction.getAmount(),
         partition);
+
+    transactionService.saveTransaction(transaction);
   }
 
   @KafkaListener(topics = "${moneyLaunderingAlert.topic.name}", groupId = "${spring.kafka.consumer.group-id}",
@@ -38,5 +45,7 @@ public class TransactionListener {
         alert.getTransaction().getDestinationIban(),
         alert.getTransaction().getAmount(),
         partition);
+
+    alertService.saveAlert(alert);
   }
 }

@@ -3,6 +3,7 @@ package at.technikum.sfrexercise2.corebankingservice.service;
 import at.technikum.sfrexercise2.corebankingservice.model.Customer;
 import at.technikum.sfrexercise2.corebankingservice.model.Transaction;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,13 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
 @Slf4j
 public class MessageSender {
 
+  @Value(value = "${customer.topic.name}")
+  private String customerTopicName;
+
+  @Value(value = "${transaction.topic.name}")
+  private String transactionTopicName;
+
+
   KafkaTemplate<String, Customer> kafkaCustomerTemplate;
   KafkaTemplate<String, Transaction> kafkaTransactionTemplate;
 
@@ -22,10 +30,10 @@ public class MessageSender {
     this.kafkaTransactionTemplate = kafkaTransactionTemplate;
   }
 
-  public void sendCustomer(Customer customer, String topicName) {
+  public void sendCustomer(Customer customer) {
 
     ListenableFuture<SendResult<String, Customer>> future = kafkaCustomerTemplate
-        .send(topicName, customer);
+        .send(customerTopicName, customer);
 
     future.addCallback(new ListenableFutureCallback<SendResult<String, Customer>>() {
 
@@ -45,10 +53,10 @@ public class MessageSender {
     });
   }
 
-  public void sendTransaction(Transaction transaction, String topicName) {
+  public void sendTransaction(Transaction transaction) {
 
     ListenableFuture<SendResult<String, Transaction>> future = kafkaTransactionTemplate
-        .send(topicName, transaction);
+        .send(transactionTopicName, transaction);
 
     future.addCallback(new ListenableFutureCallback<SendResult<String, Transaction>>() {
 
