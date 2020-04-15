@@ -1,6 +1,6 @@
-package at.technikum.sfrexercise2.customerservice.configuration;
+package at.technikum.sfrexercise2.moneylaunderingservice.configuration;
 
-import at.technikum.sfrexercise2.customerservice.model.Customer;
+import at.technikum.sfrexercise2.moneylaunderingservice.model.Transaction;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -22,10 +22,10 @@ public class KafkaConsumerConfig {
   private String bootstrapAddress;
 
   @Value(value = "${spring.kafka.consumer.group-id}")
-  private String groupId;
+  private final String groupId = "moneyLaunderingAnalysis";
 
   @Bean
-  public ConsumerFactory<String, Customer> consumerFactory() {
+  public ConsumerFactory<String, Transaction> consumerFactory() {
     Map<String, Object> props = new HashMap<>();
     props.put(
         ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
@@ -35,14 +35,14 @@ public class KafkaConsumerConfig {
         groupId);
     return new DefaultKafkaConsumerFactory<>(props,
         new StringDeserializer(),
-        new JsonDeserializer<>(Customer.class)
+        new JsonDeserializer<>(Transaction.class)
             .ignoreTypeHeaders());
   }
 
   @Bean
-  public ConcurrentKafkaListenerContainerFactory<String, Customer> kafkaListenerContainerFactory() {
+  public ConcurrentKafkaListenerContainerFactory<String, Transaction> kafkaListenerContainerFactory() {
 
-    ConcurrentKafkaListenerContainerFactory<String, Customer> factory =
+    ConcurrentKafkaListenerContainerFactory<String, Transaction> factory =
         new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(consumerFactory());
     return factory;

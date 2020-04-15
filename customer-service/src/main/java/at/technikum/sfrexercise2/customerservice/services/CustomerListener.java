@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class CustomerListener {
-  @KafkaListener(topics = "customers")
+  @KafkaListener(topics = "${customers.topic.name}")
   public void listenWithHeaders(
       @Payload Customer customer,
       @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition) {

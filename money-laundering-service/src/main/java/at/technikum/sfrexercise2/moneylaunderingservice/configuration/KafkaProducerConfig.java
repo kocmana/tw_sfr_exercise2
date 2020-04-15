@@ -1,7 +1,6 @@
-package at.technikum.sfrexercise2.corebankingservice.configuration;
+package at.technikum.sfrexercise2.moneylaunderingservice.configuration;
 
-import at.technikum.sfrexercise2.corebankingservice.model.Customer;
-import at.technikum.sfrexercise2.corebankingservice.model.Transaction;
+import at.technikum.sfrexercise2.moneylaunderingservice.model.MoneyLaunderingAlert;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -21,32 +20,12 @@ public class KafkaProducerConfig {
   private String bootstrapAddress;
 
   @Bean
-  public KafkaTemplate<String, Customer> customerKafkaTemplate() {
-    return new KafkaTemplate<>(customerProducerFactory());
+  public KafkaTemplate<String, MoneyLaunderingAlert> moneyLaunderingAlertKafkaTemplate() {
+    return new KafkaTemplate<>(moneyLaunderingProducerFactory());
   }
 
   @Bean
-  public ProducerFactory<String, Customer> customerProducerFactory() {
-    Map<String, Object> configProps = new HashMap<>();
-    configProps.put(
-        ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
-        bootstrapAddress);
-    configProps.put(
-        ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
-        StringSerializer.class);
-    configProps.put(
-        ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-        JsonSerializer.class);
-    return new DefaultKafkaProducerFactory<>(configProps);
-  }
-
-  @Bean
-  public KafkaTemplate<String, Transaction> transactionKafkaTemplateKafkaTemplate() {
-    return new KafkaTemplate<>(transactionProducerFactory());
-  }
-
-  @Bean
-  public ProducerFactory<String, Transaction> transactionProducerFactory() {
+  public ProducerFactory<String, MoneyLaunderingAlert> moneyLaunderingProducerFactory() {
     Map<String, Object> configProps = new HashMap<>();
     configProps.put(
         ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,

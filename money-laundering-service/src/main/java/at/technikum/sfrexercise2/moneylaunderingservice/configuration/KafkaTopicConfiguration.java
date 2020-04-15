@@ -1,4 +1,4 @@
-package at.technikum.sfrexercise2.corebankingservice.configuration;
+package at.technikum.sfrexercise2.moneylaunderingservice.configuration;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,11 +15,9 @@ public class KafkaTopicConfiguration {
   @Value(value = "${kafka.bootstrapAddress}")
   private String bootstrapAddress;
 
-  @Value(value="${transaction.topic.name}")
-  private String transactionChannelName;
+  @Value(value = "${alert.topic.name}")
+  private String alertTopicName;
 
-  @Value(value="${customer.topic.name}")
-  private String customerChannelName;
 
   @Bean
   public KafkaAdmin kafkaAdmin() {
@@ -29,13 +27,8 @@ public class KafkaTopicConfiguration {
   }
 
   @Bean
-  public NewTopic customerTopic() {
-    return new NewTopic(customerChannelName, 1, (short) 1);
+  public NewTopic moneyLaunderingAlertTopic() {
+    return new NewTopic(alertTopicName, 1, (short) 1);
   }
 
-
-  @Bean
-  public NewTopic transactionTopic() {
-    return new NewTopic(transactionChannelName, 1, (short) 1);
-  }
 }

@@ -1,5 +1,6 @@
 package at.technikum.sfrexercise2.balanceservice.configuration;
 
+import at.technikum.sfrexercise2.balanceservice.model.MoneyLaunderingAlert;
 import at.technikum.sfrexercise2.balanceservice.model.Transaction;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,10 +22,11 @@ public class KafkaConsumerConfig {
   @Value(value = "${kafka.bootstrapAddress}")
   private String bootstrapAddress;
 
-  private String groupId = "banking";
+  @Value(value = "${spring.kafka.consumer.group-id}")
+  private String groupId;
 
   @Bean
-  public ConsumerFactory<String, Transaction> consumerFactory() {
+  public ConsumerFactory<String, Transaction> transactionConsumerFactory() {
     Map<String, Object> props = new HashMap<>();
     props.put(
         ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
@@ -39,11 +41,35 @@ public class KafkaConsumerConfig {
   }
 
   @Bean
-  public ConcurrentKafkaListenerContainerFactory<String, Transaction> kafkaListenerContainerFactory() {
+  public ConcurrentKafkaListenerContainerFactory<String, Transaction> transactionKafkaListenerContainerFactory() {
 
     ConcurrentKafkaListenerContainerFactory<String, Transaction> factory =
         new ConcurrentKafkaListenerContainerFactory<>();
-    factory.setConsumerFactory(consumerFactory());
+    factory.setConsumerFactory(transactionConsumerFactory());
+    return factory;
+  }
+
+  @Bean
+  public ConsumerFactory<String, MoneyLaunderingAlert> moneyLaunderingAlertConsumerFactory() {
+    Map<String, Object> props = new HashMap<>();
+    props.put(
+        ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
+        bootstrapAddress);
+    props.put(
+        ConsumerConfig.GROUP_ID_CONFIG,
+        groupId);
+    return new DefaultKafkaConsumerFactory<>(props,
+        new StringDeserializer(),
+        new JsonDeserializer<>(MoneyLaunderingAlert.class)
+            .ignoreTypeHeaders());
+  }
+
+  @Bean
+  public ConcurrentKafkaListenerContainerFactory<String, MoneyLaunderingAlert> moneyLaunderingAlertKafkaListenerContainerFactory() {
+
+    ConcurrentKafkaListenerContainerFactory<String, MoneyLaunderingAlert> factory =
+        new ConcurrentKafkaListenerContainerFactory<>();
+    factory.setConsumerFactory(moneyLaunderingAlertConsumerFactory());
     return factory;
   }
 

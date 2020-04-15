@@ -30,6 +30,6 @@ public class Runner implements CommandLineRunner {
   }
 
   private Transaction generateTransaction(){
-    return new Transaction("AT01234", "AT02345", 50.50);
+    return new Transaction("AT01234", "AT02345", 2_000_050.50);
   }
 }
